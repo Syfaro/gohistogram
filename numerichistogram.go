@@ -163,12 +163,24 @@ func (h *NumericHistogram) trim() {
 func (h *NumericHistogram) String() (str string) {
 	str += fmt.Sprintln("Total:", h.total)
 
+	maxLen := 0
+	for i := range h.bins {
+		l := len(fmt.Sprintf("%.2f", h.bins[i].value))
+		if l > maxLen {
+			maxLen = l
+		}
+	}
+
 	for i := range h.bins {
 		var bar string
 		for j := 0; j < int(float64(h.bins[i].count)/float64(h.total)*200); j++ {
 			bar += "."
 		}
-		str += fmt.Sprintln(h.bins[i].value, "\t", bar)
+		v := fmt.Sprintf("%.2f", h.bins[i].value)
+		for len(v) <= maxLen {
+			v += " "
+		}
+		str += fmt.Sprintln(v, bar)
 	}
 
 	return
